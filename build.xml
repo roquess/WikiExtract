@@ -1,0 +1,47 @@
+<project name="WikiExtract" default="compile">
+	<property name="basedir" value="."/>
+    <property name="src" value="src"/>
+    <property name="build" value="build"/>
+    <property name="lib" value="${basedir}/lib"/>
+    
+    <property name="file" value="res/file.bz2" />
+    
+	<path id="classpath">
+        <fileset dir="${lib}" includes="*.jar"/>
+        <fileset dir="${build}/jar" includes="**.jar"/>
+    </path>
+	
+	<target name="compile">
+		<echo message="Compile WikiExtract"/>
+		<mkdir dir="${build}"/>
+		<mkdir dir="${build}/classes"/>
+		<mkdir dir="${build}/jar"/>
+		<javac includeantruntime="false" srcdir="src" destdir="${build}/classes" >
+		  <include name="**/*.java"/>
+		  <classpath refid="classpath"/>
+		</javac>
+	</target>
+	
+	<target name="jar" depends="compile">
+		<echo message="Make WikiExtract.jar"/>
+        <jar destfile="${build}/jar/WikiExtract.jar" basedir="${build}/classes">
+            <manifest>
+				<attribute name="Class-Path" value="${lib}"/>
+                <attribute name="Main-Class" value="WikiExtract"/>
+            </manifest>
+        </jar>
+    </target>
+
+	<target name="run" depends="jar">
+		<echo message="Execute WikiExtract"/>
+		<java classname="WikiExtract" fork="true">
+			<classpath refid="classpath" />
+			<arg value="${file}" />
+		</java>
+	</target>
+	
+	<target name="clean">
+		<echo message="Clean WikiExtract"/>
+		<delete dir="${build}" />
+	</target>
+</project>
